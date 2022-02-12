@@ -1,0 +1,4 @@
+# Latex
+!*.tex
+!*.sty
+!*.bib

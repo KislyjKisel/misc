@@ -1,4 +1,16 @@
 *
 !.gitignore
+!*/
 
-!*.cpp
+# C
+!*.c
+!*.h
+
+# Fortran
+!*.f90
+!*.f95
+!*.f03
+
+# Haskell
+!*.hs
+!*.lhs
