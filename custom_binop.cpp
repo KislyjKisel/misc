@@ -1,10 +1,9 @@
-#include <iostream>
-#include <algorithm>
 #include <type_traits>
-#include <vector>
+#include <utility>
 
 namespace op {
-    template<typename Lhs, typename Rhs, typename Out, typename F> requires std::is_invocable_r_v<Out, F, Lhs, Rhs>
+    // hidden
+    template<typename Lhs, typename Rhs, typename Out, typename F>
     struct Binop { 
         constexpr friend auto operator<(const Lhs& lhs, const Binop& op) {
             return (struct {
@@ -17,7 +16,8 @@ namespace op {
             }){ std::move(op.f), lhs };
         }
 
-        constexpr Binop(F&& f) : f(std::forward<F>(f)) { }
+        template<typename FF>
+        constexpr Binop(FF&& f) : f(std::forward<FF>(f)) { }
 
     private:
         [[no_unique_address]] F f;
@@ -27,10 +27,28 @@ namespace op {
     constexpr Binop<Lhs,Rhs,Out,F> make_binop(F&& f) { return Binop<Lhs, Rhs, Out, F>(std::forward<F>(f)); }
 }
 
-auto inside_of = op::make_binop<int, std::vector<int>, bool>([](int v, std::vector<int> xs) { return std::any_of(xs.begin(), xs.end(), [v](int x) { return x == v; } ); });
+
+// Example
+
+#include <algorithm>
+#include <iostream>
+#include <vector>
+
+auto inside_of = op::make_binop<int, const std::vector<int>&, bool>(
+    [](int v, const std::vector<int>& xs) {
+        return std::any_of(xs.begin(), xs.end(), [v](int x) { return x == v; } );
+    });
+
 #define ϵ <inside_of>
 
 int main() {
     std::vector<int> xs { 1, 2, 3, 4, 5 };
-    std::cout << (6 ϵ xs ? "Yes" : "No") << '\n';
+
+    std::cout << "xs = { ";
+    for(auto x : xs) std::cout << x << ' ';
+    std::cout << "}\n";
+
+    const auto test = [&](int x){ std::cout << x << " ϵ xs ? " << (x ϵ xs ? "Yes" : "No") << "\n"; }; 
+    test(3);
+    test(7);
 }
