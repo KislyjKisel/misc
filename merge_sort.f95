@@ -38,9 +38,6 @@ contains
             arr(l + k - 1) = cpy(k)
         end do
         
-        ! print*, "After merge(", l, r, c, ")"
-        ! call print1d(arr, 1, 4)
-        
         deallocate(cpy)
         
     end subroutine merge
