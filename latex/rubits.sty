@@ -1,0 +1,21 @@
+\ProvidesPackage{rubits}[2021/11/07]
+
+\RequirePackage{intcalc}  
+\RequirePackage{xifthen}
+
+% Arg1 Число (N)
+% Arg2 Основание
+% Arg3 Окончание, for N = 1
+% Arg4 Окончание, for 2 <= N & N <= 4
+% Arg5 Окончание, for N = 0 | 5 <= N & N <= 20
+
+% {3} {jabloc} {o} {a} {} 
+\newcommand{\runumof}[5]{%
+    #1 #2{\ifthenelse{#1>4 \AND #1<21}%
+    {#5}%
+    {\ifthenelse{\intcalcMod{#1}{10}=1}%
+        {#3}%
+        {\ifthenelse{\intcalcMod{#1}{10}>1 \AND \intcalcMod{#1}{10}<5}{#4}{#5}}}}%
+}
+
+\endinput
